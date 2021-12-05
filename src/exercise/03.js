@@ -18,11 +18,7 @@ function FavoriteAnimal({animal, onAnimalChange}) {
   return (
     <div>
       <label htmlFor="animal">Favorite Animal: </label>
-      <input
-        id="animal"
-        value={animal}
-        onChange={event => onAnimalChange(event.target.value)}
-      />
+      <input id="animal" value={animal} onChange={onAnimalChange} />
     </div>
   )
 }
@@ -40,7 +36,10 @@ function App() {
     <form>
       <Name />
       {/* 🐨 pass the animal and onAnimalChange prop here (similar to the Name component above) */}
-      <FavoriteAnimal animal={animal} onAnimalChange={setAnimal} />
+      <FavoriteAnimal
+        animal={animal}
+        onAnimalChange={event => setAnimal(event.target.value)}
+      />
       {/* 🐨 pass the animal prop here */}
       <Display animal={animal} />
     </form>

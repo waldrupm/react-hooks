@@ -3,9 +3,36 @@
 
 import * as React from 'react'
 
+function useLocalStorage(
+  key,
+  initialValue,
+  {serialize = JSON.stringify, deserialize = JSON.parse} = {},
+) {
+  const [value, setValue] = React.useState(() => {
+    const valueInLocalStorage = window.localStorage.getItem(key)
+    return valueInLocalStorage
+      ? deserialize(valueInLocalStorage)
+      : typeof initialValue === 'function'
+      ? initialValue()
+      : initialValue
+  })
+  const prevKeyRef = React.useRef(key)
+
+  React.useEffect(() => {
+    const prevKey = prevKeyRef.current
+    if (prevKey !== key) {
+      window.localStorage.removeItem(prevKey)
+    }
+    prevKeyRef.current = key
+    window.localStorage.setItem(key, serialize(value))
+  }, [key, serialize, value])
+
+  return [value, setValue]
+}
+
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const [squares, setSquares] = React.useState(Array(9).fill(null))
+  const [squares, setSquares] = useLocalStorage('squares', Array(9).fill(null))
 
   // 🐨 We'll need the following bits of derived state:
   // - nextValue ('X' or 'O')
